@@ -4,8 +4,8 @@ import com.viniciusvieira.jwt.api.representation.model.request.AuthenticationReq
 import com.viniciusvieira.jwt.api.representation.model.request.RegisterRequest;
 import com.viniciusvieira.jwt.api.representation.model.response.AuthenticationResponse;
 import com.viniciusvieira.jwt.core.security.service.JwtService;
-import com.viniciusvieira.jwt.domain.model.Role;
-import com.viniciusvieira.jwt.domain.model.User;
+import com.viniciusvieira.jwt.domain.model.user.Role;
+import com.viniciusvieira.jwt.domain.model.user.User;
 import com.viniciusvieira.jwt.domain.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ public class AuthenticationService {
                 .build();
 
         userRepository.save(user);
-        Map claims = new HashMap();
+        Map<String, Object> claims = new HashMap<>();
         claims.put("role", user.getRole());
 
         String jwtToken = jwtService.generateToken(claims, user);

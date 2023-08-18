@@ -15,11 +15,14 @@ public class AuthenticationController {
     // FIXME - caso ocorra qualquer erro, ele lança 403 forbidden
     private final AuthenticationService authenticationService;
 
+    // aki é para se registrar
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request){
         return ResponseEntity.ok(authenticationService.register(request));
     }
 
+    // aki seria como se fosse o login da nossa aplicaçao
+    // toda vez que realizamos o login geramos um novo token
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request){
         return ResponseEntity.ok(authenticationService.authenticate(request));

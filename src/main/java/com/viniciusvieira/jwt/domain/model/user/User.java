@@ -1,6 +1,6 @@
 package com.viniciusvieira.jwt.domain.model.user;
 
-import com.viniciusvieira.jwt.domain.model.token.Token;
+import com.viniciusvieira.jwt.domain.model.token.TokenModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,7 +36,7 @@ public class User implements UserDetails {
     private Role role;
 
     @OneToMany(mappedBy = "user")
-    private List<Token> tokens;
+    private List<TokenModel> tokens;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

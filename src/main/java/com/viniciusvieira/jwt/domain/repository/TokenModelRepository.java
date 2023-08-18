@@ -1,6 +1,6 @@
 package com.viniciusvieira.jwt.domain.repository;
 
-import com.viniciusvieira.jwt.domain.model.token.Token;
+import com.viniciusvieira.jwt.domain.model.token.TokenModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface TokenRepository extends JpaRepository<Token, UUID> {
+public interface TokenModelRepository extends JpaRepository<TokenModel, UUID> {
 
     @Query("""
-            SELECT t from Token t inner join User u ON t.user.id = u.id
+            SELECT t from TokenModel t inner join User u ON t.user.id = u.id
             WHERE u.id = :userId AND (t.expired = false OR t.revoked = false)
             """)
-    List<Token> findAllValidTokensByUser(UUID userId);
+    List<TokenModel> findAllValidTokensByUser(UUID userId);
 
-    Optional<Token> findByName(String name);
+    Optional<TokenModel> findByToken(String token);
 }

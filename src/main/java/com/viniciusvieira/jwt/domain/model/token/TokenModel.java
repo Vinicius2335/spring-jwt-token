@@ -16,17 +16,20 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Token {
+@Table(name = "token")
+public class TokenModel {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    //@Column(columnDefinition = "varchar(36)") TEST - sem ele para ver se funciona
     private UUID id;
-    private String name;
+    private String token;
 
     @Enumerated(EnumType.STRING)
     private TokenType tokenType;
+
+    @Column(columnDefinition = "boolean")
     private boolean expired;
+    @Column(columnDefinition = "boolean")
     private boolean revoked;
 
     @ManyToOne

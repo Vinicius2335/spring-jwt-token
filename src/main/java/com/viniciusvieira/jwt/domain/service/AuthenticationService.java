@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +40,13 @@ public class AuthenticationService {
                 .password(encodePassword(request.getPassword()))
                 .role(Role.USER)
                 .build();
+
+        // Comentado pq foi criado uma annotation
+        //Optional<User> userFound = userRepository.findByEmail(user.getEmail());
+        //
+        //if (userFound.isPresent()){
+        //    throw new RuntimeException("Email em Uso...");
+        //}
 
         User savedUser = userRepository.save(user);
         Map<String, Object> claims = new HashMap<>();
@@ -108,3 +116,36 @@ public class AuthenticationService {
         tokenModelRepository.saveAll(validsUserTokens);
     }
 }
+
+/*
+    OBS: essa lógica dá certo pq algum campo da tabela esta como unique
+    Se existir um cliente com o email x
+    E outro cliente for cadastrado com esse email x
+    lança o erro
+
+    a grande duvida era, e se o cliente que está sendo cadastrado for igual a algum existente
+    passaria com o email igual
+    por isso da observaçao no começo
+
+    @Transactional
+	public Cliente salvar(Cliente cliente) {
+		boolean emailEmUso = clienteRepository.findByEmail(cliente.getEmail())
+				.stream()
+				.anyMatch(clienteEncontrado -> !clienteEncontrado.equals(cliente));
+
+		if (emailEmUso) {
+			throw new NegocioException("Já existe um cliente cadastrado com este e-mail");
+		}
+
+		return clienteRepository.save(cliente);
+	}
+
+	De qualquer forma, isso já bastaria
+	ou criar uma annotation
+
+	Optional<User> userFound = userRepository.findByEmail(user.getEmail());
+
+        if (userFound.isPresent()){
+            throw new RuntimeException("Email em Uso...");
+        }
+ */

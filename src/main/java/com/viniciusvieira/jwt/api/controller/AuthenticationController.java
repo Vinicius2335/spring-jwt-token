@@ -4,6 +4,7 @@ import com.viniciusvieira.jwt.api.representation.model.request.AuthenticationReq
 import com.viniciusvieira.jwt.api.representation.model.request.RegisterRequest;
 import com.viniciusvieira.jwt.api.representation.model.response.AuthenticationResponse;
 import com.viniciusvieira.jwt.domain.service.AuthenticationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ public class AuthenticationController {
 
     // aki é para se registrar
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request){
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody @Valid RegisterRequest request){
         return ResponseEntity.ok(authenticationService.register(request));
     }
 

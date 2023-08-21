@@ -6,7 +6,7 @@ import com.viniciusvieira.jwt.api.representation.model.response.AuthenticationRe
 import com.viniciusvieira.jwt.core.security.service.JwtService;
 import com.viniciusvieira.jwt.domain.model.token.TokenModel;
 import com.viniciusvieira.jwt.domain.model.token.TokenType;
-import com.viniciusvieira.jwt.domain.model.user.Role;
+import com.viniciusvieira.jwt.domain.model.user.RoleTypes;
 import com.viniciusvieira.jwt.domain.model.user.User;
 import com.viniciusvieira.jwt.domain.repository.TokenModelRepository;
 import com.viniciusvieira.jwt.domain.repository.UserRepository;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +37,7 @@ public class AuthenticationService {
                 .lastName(request.getLastName())
                 .email(request.getEmail())
                 .password(encodePassword(request.getPassword()))
-                .role(Role.USER)
+                .roleTypes(RoleTypes.USER)
                 .build();
 
         // Comentado pq foi criado uma annotation
@@ -50,7 +49,7 @@ public class AuthenticationService {
 
         User savedUser = userRepository.save(user);
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", user.getRole());
+        claims.put("role", user.getRoleTypes());
 
         String jwtToken = jwtService.generateToken(claims, user);
         //String jwtToken = jwtService.generateToken(user)

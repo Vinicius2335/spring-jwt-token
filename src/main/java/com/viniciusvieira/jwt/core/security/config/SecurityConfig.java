@@ -32,9 +32,13 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(
                         authorize -> authorize
-                                .requestMatchers("/api/v1/auth/**").permitAll()
+                                // permite qualquer um acessar "/api/v1/auth/**" sem estar autenticado
+                                .requestMatchers("/api/v1/auth/**")
+                                    .permitAll()
+
+                                // qualquer outra rota que não seja "/api/v1/auth/**", o usuário deve estar autenticado
                                 .anyRequest()
-                                .authenticated()
+                                    .authenticated()
                 );
 
         http.sessionManagement(
@@ -46,6 +50,7 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
+        // config de logout
         http
                 .logout(
                         logout -> logout

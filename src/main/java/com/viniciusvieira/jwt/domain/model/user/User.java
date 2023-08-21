@@ -34,14 +34,14 @@ public class User implements UserDetails {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private RoleTypes roleTypes;
 
     @OneToMany(mappedBy = "user")
     private List<TokenModel> tokens;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority(roleTypes.name()));
     }
 
     @Override

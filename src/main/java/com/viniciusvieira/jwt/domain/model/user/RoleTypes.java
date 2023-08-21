@@ -10,10 +10,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.viniciusvieira.jwt.domain.model.user.PermissionTypes.*;
+import static com.viniciusvieira.jwt.domain.model.user.PermissionTypes.MANAGER_CREATE;
 
 @Getter
 @RequiredArgsConstructor
-public enum RoleExemplo {
+public enum RoleTypes {
     USER(Collections.emptySet()),
     ADMIN(
             Set.of(
@@ -38,8 +39,12 @@ public enum RoleExemplo {
 
     private final Set<PermissionTypes> permissions;
 
+    // 1- transforma cada permissao em SimpleGrantedAuthority
+    // 2 - ajusta o nome da role para ser usado pelo spring security com o ROLE_
+    // 3- transfoma essa role em SimpleGrantedAuthority
+    // 4 - Retorna tudo isso numa lista de SimpleGrantedAuthority para ser usado no User model
     public List<SimpleGrantedAuthority> getAuthorities() {
-        var authorities = getPermissions()
+        List<SimpleGrantedAuthority> authorities = getPermissions()
                 .stream()
                 .map(permission -> new SimpleGrantedAuthority(permission.getPermission()))
                 .collect(Collectors.toList());

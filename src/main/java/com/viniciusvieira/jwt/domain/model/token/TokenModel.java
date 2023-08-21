@@ -25,7 +25,7 @@ public class TokenModel {
     private String token;
 
     @Enumerated(EnumType.STRING)
-    private TokenType tokenType;
+    private TokenTypes tokenTypes;
 
     @Column(columnDefinition = "boolean")
     private boolean expired;

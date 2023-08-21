@@ -1,6 +1,7 @@
 package com.viniciusvieira.jwt.api.representation.model.request;
 
 import com.viniciusvieira.jwt.core.annotation.EmailValidation;
+import com.viniciusvieira.jwt.domain.model.user.RoleTypes;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,4 +18,5 @@ public class RegisterRequest {
     @EmailValidation
     private String email;
     private String password;
+    private RoleTypes role;
 }

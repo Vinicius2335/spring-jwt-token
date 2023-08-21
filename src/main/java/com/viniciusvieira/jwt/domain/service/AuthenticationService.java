@@ -4,7 +4,7 @@ import com.viniciusvieira.jwt.api.representation.model.request.AuthenticationReq
 import com.viniciusvieira.jwt.api.representation.model.request.RegisterRequest;
 import com.viniciusvieira.jwt.api.representation.model.response.AuthenticationResponse;
 import com.viniciusvieira.jwt.core.security.service.JwtService;
-import com.viniciusvieira.jwt.domain.model.user.Role;
+import com.viniciusvieira.jwt.domain.model.user.RoleTypes;
 import com.viniciusvieira.jwt.domain.model.user.User;
 import com.viniciusvieira.jwt.domain.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -32,12 +32,12 @@ public class AuthenticationService {
                 .lastName(request.getLastName())
                 .email(request.getEmail())
                 .password(encodePassword(request.getPassword()))
-                .role(Role.USER)
+                .roleTypes(RoleTypes.USER)
                 .build();
 
         userRepository.save(user);
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", user.getRole());
+        claims.put("role", user.getRoleTypes());
 
         String jwtToken = jwtService.generateToken(claims, user);
         //String jwtToken = jwtService.generateToken(user)

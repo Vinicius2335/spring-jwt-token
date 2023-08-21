@@ -1,5 +1,6 @@
 package com.viniciusvieira.jwt.api.controller;
 
+import com.viniciusvieira.jwt.api.openapi.controller.AuthenticationControllerOpenApi;
 import com.viniciusvieira.jwt.api.representation.model.request.AuthenticationRequest;
 import com.viniciusvieira.jwt.api.representation.model.request.RegisterRequest;
 import com.viniciusvieira.jwt.api.representation.model.response.AuthenticationResponse;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
-public class AuthenticationController {
+public class AuthenticationController implements AuthenticationControllerOpenApi {
     // FIXME - caso ocorra qualquer erro, ele lança 403 forbidden
     private final AuthenticationService authenticationService;
 

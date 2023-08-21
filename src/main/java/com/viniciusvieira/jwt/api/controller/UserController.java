@@ -1,5 +1,6 @@
 package com.viniciusvieira.jwt.api.controller;
 
+import com.viniciusvieira.jwt.api.openapi.controller.UserControllerOpenApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
 @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-public class UserController {
+public class UserController implements UserControllerOpenApi {
     @GetMapping
     public String get(){
         return "GET: user controller";

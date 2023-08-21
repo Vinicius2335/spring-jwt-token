@@ -1,12 +1,13 @@
 package com.viniciusvieira.jwt.api.controller;
 
+import com.viniciusvieira.jwt.api.openapi.controller.AdminControllerOpenApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/admin")
 @RequiredArgsConstructor
-public class AdminController {
+public class AdminController implements AdminControllerOpenApi {
     @GetMapping
     public String get(){
         return "GET: admin controller";

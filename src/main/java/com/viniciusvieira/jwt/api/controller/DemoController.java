@@ -1,5 +1,6 @@
 package com.viniciusvieira.jwt.api.controller;
 
+import com.viniciusvieira.jwt.api.openapi.controller.DemoControllerOpenApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/demo")
 @RequiredArgsConstructor
-public class DemoController {
+public class DemoController implements DemoControllerOpenApi {
 
     @GetMapping
     public ResponseEntity<String> sayHello(){

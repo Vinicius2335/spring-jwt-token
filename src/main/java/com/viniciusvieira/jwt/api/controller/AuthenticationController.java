@@ -4,10 +4,14 @@ import com.viniciusvieira.jwt.api.representation.model.request.AuthenticationReq
 import com.viniciusvieira.jwt.api.representation.model.request.RegisterRequest;
 import com.viniciusvieira.jwt.api.representation.model.response.AuthenticationResponse;
 import com.viniciusvieira.jwt.domain.service.AuthenticationService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -27,6 +31,14 @@ public class AuthenticationController {
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request){
         return ResponseEntity.ok(authenticationService.authenticate(request));
+    }
+
+    @PostMapping("/refresh-token")
+    public void refreshToken(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws IOException {
+        authenticationService.refreshToken(request, response);
     }
 
     @GetMapping("/hello")

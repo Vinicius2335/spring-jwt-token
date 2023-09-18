@@ -1,5 +1,6 @@
 package com.viniciusvieira.jwt.domain.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viniciusvieira.jwt.api.representation.model.request.AuthenticationRequest;
 import com.viniciusvieira.jwt.api.representation.model.request.RegisterRequest;
 import com.viniciusvieira.jwt.api.representation.model.response.AuthenticationResponse;
@@ -10,16 +11,24 @@ import com.viniciusvieira.jwt.domain.model.user.RoleTypes;
 import com.viniciusvieira.jwt.domain.model.user.User;
 import com.viniciusvieira.jwt.domain.repository.TokenModelRepository;
 import com.viniciusvieira.jwt.domain.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +50,7 @@ public class AuthenticationService {
                 .build();
 
         // Comentado pq foi criado uma annotation
-        //Optional<User> userFound = userRepository.findByEmail(user.getEmail());
+        //Optional<User> userFound = userRepository.findByEmail(user.getEmail())
         //
         //if (userFound.isPresent()){
         //    throw new RuntimeException("Email em Uso...");
@@ -53,11 +62,13 @@ public class AuthenticationService {
 
         String jwtToken = jwtService.generateToken(claims, user);
         //String jwtToken = jwtService.generateToken(user)
+        String refresToken = jwtService.generateRefreshToken(user); // criando o refresh token
 
         savedUserToken(jwtToken, savedUser);
 
         return AuthenticationResponse.builder()
-                .token(jwtToken)
+                .accessToken(jwtToken)
+                .refreshToken(refresToken)
                 .build();
     }
 
@@ -74,12 +85,14 @@ public class AuthenticationService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow();
         String jwtToken = jwtService.generateToken(user);
+        String refresToken = jwtService.generateRefreshToken(user); // criando refresh token
 
         revokedAllUserTokens(user);
         savedUserToken(jwtToken, user);
 
         return AuthenticationResponse.builder()
-                .token(jwtToken)
+                .accessToken(jwtToken)
+                .refreshToken(refresToken)
                 .build();
     }
 
@@ -113,6 +126,39 @@ public class AuthenticationService {
         });
 
         tokenModelRepository.saveAll(validsUserTokens);
+    }
+
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String refreshToken;
+        final String userEmail;
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")){
+            return;
+        }
+
+        // extract token
+        refreshToken = authHeader.substring(7);
+        // extract userName do JWT Token
+        userEmail = jwtService.extractUsername(refreshToken);
+
+        if (userEmail != null) {
+            User user = this.userRepository.findByEmail(userEmail).orElseThrow();
+
+            if (jwtService.isTokenValid(refreshToken, user)){
+               String accessToken = jwtService.generateToken(user);
+
+               revokedAllUserTokens(user);
+               savedUserToken(accessToken, user);
+
+               AuthenticationResponse authResponse = AuthenticationResponse.builder()
+                       .accessToken(accessToken)
+                       .refreshToken(refreshToken)
+                       .build();
+
+               new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+            }
+        }
     }
 }
 

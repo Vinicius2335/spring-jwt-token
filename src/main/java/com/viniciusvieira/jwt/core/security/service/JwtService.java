@@ -21,6 +21,10 @@ import java.util.function.Function;
 public class JwtService {
     @Value("${jwt.secret}")
     private String secretKey;
+    @Value("${jwt.expiration}")
+    private Long jwtExpiration;
+    @Value("${jwt.refresh-token.expiration}")
+    private Long refreshExpiration;
 
     // Extraindo username do token
     public String extractUsername(String token) {
@@ -53,11 +57,21 @@ public class JwtService {
 
     // caso queira adicionar novas claims basta adicionar o map criar um map aki
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+        return buildToken(extraClaims, userDetails, jwtExpiration);
+    }
+
+    // Cria o Refresh Token
+    public String generateRefreshToken(UserDetails userDetails) {
+        return buildToken(new HashMap<>(), userDetails, refreshExpiration);
+    }
+
+    // Novo método
+    private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration){
         return Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.now().plus(1, ChronoUnit.DAYS)))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -75,4 +89,5 @@ public class JwtService {
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
+
 }

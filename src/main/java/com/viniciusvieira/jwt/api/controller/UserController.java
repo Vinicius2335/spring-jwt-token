@@ -1,15 +1,22 @@
 package com.viniciusvieira.jwt.api.controller;
 
 import com.viniciusvieira.jwt.api.openapi.controller.UserControllerOpenApi;
+import com.viniciusvieira.jwt.api.representation.model.request.ChangePasswordRequest;
+import com.viniciusvieira.jwt.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
 @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 public class UserController implements UserControllerOpenApi {
+    private final UserService userService;
+
     @GetMapping
     public String get(){
         return "GET: user controller";
@@ -33,4 +40,12 @@ public class UserController implements UserControllerOpenApi {
         return "DELETE: user controller";
     }
 
+    @PatchMapping
+    public ResponseEntity<Void> changePassword(
+            @RequestBody ChangePasswordRequest request,
+            Principal connectedUser
+    ){
+        userService.changePassword(request, connectedUser);
+        return ResponseEntity.ok().build();
+    }
 }
